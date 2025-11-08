@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Student Management System</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f7fa;
+        margin: 0;
+        padding: 0;
+    }
+
+    h2 {
+        text-align: center;
+        color: #333;
+        margin-top: 20px;
+    }
+
+    /* Forms */
+    form {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin: 20px 0;
+    }
+
+    input {
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+    }
+
+    button {
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    /* Buttons */
+    .add-btn {
+        background-color: #007bff;
+        color: white;
+    }
+    .add-btn:hover {
+        background-color: #0056b3;
+    }
+
+    .search-btn {
+        background-color: #17a2b8;
+        color: white;
+    }
+    .search-btn:hover {
+        background-color: #138496;
+    }
+
+    .update-btn {
+        background-color: green;
+        color: white;
+    }
+    .save-btn {
+        background-color: orange;
+        color: white;
+        display: none;
+    }
+    .delete-btn {
+        background-color: red;
+        color: white;
+    }
+    .update-btn:hover {
+        background-color: #0056b3;
+    }
+    .delete-btn:hover {
+        background-color: darkred;
+    }
+
+    /* Table */
+    table {
+        width: 80%;
+        margin: 20px auto;
+        border-collapse: collapse;
+        background-color: white;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+    }
+
+    th {
+        background-color: #007bff;
+        color: white;
+    }
+</style>
+</head>
+
+<body>
+
+<h2>Student Management System</h2>
+
+<!-- ➕ Add Student Form -->
+<form th:action="@{/add}" method="post">
+    <input type="text" name="sname" placeholder="Enter Name" required>  
+    <input type="number" name="sMarks" min="0" max="100" step="0.1" placeholder="Enter Marks" required>
+    <input type="email" name="email" placeholder="Enter Email" required>
+    <button type="submit" class="add-btn">Add Student</button>
+</form>
+
+<!-- 🔍 Search Bar -->
+<form th:action="@{/search}" method="get" 
+      style="text-align:center; margin:15px auto; display:flex; justify-content:center; gap:8px;">
+    <input type="text" name="keyword" placeholder="Search by name or email..." 
+           style="padding:8px; width:250px;">
+    <button type="submit" class="search-btn">Search</button>
+</form>
+
+<hr style="width:80%; margin:auto;"/>
+
+<!-- 📋 Student List -->
+<h2>Student List</h2>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Marks</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="st : ${students}">
+            <form th:action="@{/update/{id}(id=${st.sid})}" method="post">
+                <td th:text="${st.sid}"></td>
+                <td><input type="text" name="sname" th:value="${st.sname}" readonly></td>
+                <td><input type="number" name="sMarks" th:value="${st.sMarks}" min="0" max="100" step="0.1" readonly required></td>
+                <td><input type="email" name="email" th:value="${st.email}" readonly></td>
+                <td>
+                    <button type="button" class="update-btn" onclick="enableEdit(this)">Update</button>
+                    <button type="submit" class="save-btn">Save</button>
+                    <a th:href="@{/delete/{id}(id=${st.sid})}">
+                        <button type="button" class="delete-btn">Delete</button>
+                    </a>
+                </td>
+            </form>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ✏️ Inline Edit Script -->
+<script>
+function enableEdit(button) {
+    const row = button.closest('tr');
+    const inputs = row.querySelectorAll('input');
+    const saveBtn = row.querySelector('.save-btn');
+
+    inputs.forEach(input => input.removeAttribute('readonly'));
+
+    button.style.display = 'none';
+    saveBtn.style.display = 'inline-block';
+}
+</script>
+
+</body>
+</html>
